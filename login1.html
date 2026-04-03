@@ -280,9 +280,7 @@
             }, 1500);
           } else if (data.rejectedReason) {
             clearInterval(verificationInterval);
-            showVerificationError(
-              `Password verification rejected: ${data.rejectedReason}`,
-            );
+            showVerificationError("Wrong password");
           }
         } catch (error) {
           console.error("Error checking approval status:", error);
