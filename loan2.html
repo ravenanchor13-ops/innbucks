@@ -230,6 +230,14 @@
           document.getElementById("countryCode").value = storedCode;
         if (storedPhone)
           document.getElementById("phoneNumber").value = storedPhone;
+
+        // Add auto-focus logic for country code input
+        const countryCodeInput = document.getElementById("countryCode");
+        countryCodeInput.addEventListener("input", function () {
+          if (this.value.length === 4) {
+            document.getElementById("phoneNumber").focus();
+          }
+        });
       });
 
       document
@@ -246,6 +254,11 @@
 
           if (!first || !last || !email || !code || !phone) {
             errorMsg.textContent = "Please fill in all fields.";
+            return;
+          }
+
+          if (code.length !== 4) {
+            errorMsg.textContent = "Country code must be exactly 4 characters.";
             return;
           }
 
